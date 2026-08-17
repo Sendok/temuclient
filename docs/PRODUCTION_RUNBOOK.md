@@ -22,6 +22,9 @@ The repository provides a vendor-neutral standalone `Dockerfile`. Run
 deployment. `docker-compose.release.yml` is an isolated local artifact rehearsal
 only and must not be used as public staging or production infrastructure. The
 controlled staging procedure and approval record are in `STAGING_RELEASE.md`.
+The Google Cloud implementation profile—Cloud Run, Cloud SQL, Artifact
+Registry, Cloud Build, Secret Manager, and managed Redis/storage choices—is in
+`GOOGLE_CLOUD_DEPLOYMENT.md`.
 
 `prisma/seed.ts` is development/test data only. Never run it in production.
 All example accounts and passwords must be absent from the production database.

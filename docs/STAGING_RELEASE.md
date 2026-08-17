@@ -3,7 +3,7 @@
 This is the controlled release activity after Phase 10. It is not Phase 11 and
 does not authorize continued product development.
 
-## Current decision — 2026-08-12
+## Current decision — 2026-08-17
 
 | Gate | Decision | Evidence |
 |---|---|---|
@@ -11,7 +11,7 @@ does not authorize continued product development.
 | Clean database migration | PASS | All 14 committed migrations applied in an isolated PostgreSQL 16 database |
 | Local release rehearsal | PASS | App, PostgreSQL, and Redis healthy; liveness and readiness returned success |
 | Seed isolation | PASS | Clean rehearsal database contained zero users before an explicit smoke registration |
-| Public staging deployment | BLOCKED | No hosting target, deploy credentials, DNS/TLS, or managed service endpoints are configured in this workspace |
+| Public staging deployment | BLOCKED | Google Cloud Run profile and build configuration are prepared, but no GCP project/credential, DNS/TLS, or managed service endpoints are configured |
 | Production launch | NOT APPROVED | Public staging evidence and named human approvers are still missing |
 
 The local rehearsal uses `mock` storage, log-only email, sandbox billing, and

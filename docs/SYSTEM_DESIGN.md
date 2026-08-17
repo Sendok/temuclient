@@ -865,6 +865,14 @@ AI Provider
 
 Infrastructure should use environment-based configuration.
 
+The approved Google Cloud profile preserves this topology with Cloud Run for the
+standalone application, Cloud SQL for PostgreSQL, Artifact Registry/Cloud Build
+for immutable images, Secret Manager for credentials, and a separate Cloud Run
+Job for migrations. Redis may be Memorystore through private Direct VPC egress
+or a TLS-managed Redis provider. Cloud Storage is used only through its private
+XML API/HMAC compatibility surface until a native storage adapter is approved.
+See `GOOGLE_CLOUD_DEPLOYMENT.md` for the controlled procedure.
+
 ---
 
 ## 33. Environment Variables
