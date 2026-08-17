@@ -1,0 +1,69 @@
+{
+  "name": "temuclient",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "node scripts/prepare-standalone.mjs && node .next/standalone/server.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "RUN_DATABASE_TESTS=true vitest run tests/integration",
+    "test:watch": "vitest",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:status": "prisma migrate status",
+    "db:seed": "prisma db seed",
+    "staging:preflight": "tsx scripts/staging-preflight.ts",
+    "staging:rehearsal:up": "docker compose -f docker-compose.release.yml up --build --wait",
+    "staging:rehearsal:down": "docker compose -f docker-compose.release.yml down"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.7.1",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "bcryptjs": "^3.0.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "ioredis": "^6.0.0",
+    "lucide-react": "^1.31.0",
+    "next": "^16.3.0",
+    "openai": "^7.4.0",
+    "pg": "^8.23.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-hook-form": "^7.85.0",
+    "react-markdown": "^10.1.0",
+    "tailwind-merge": "^3.6.0",
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.2.0",
+    "@types/pg": "^8.21.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.3.0",
+    "prisma": "^7.9.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "@prisma/engines@7.9.1": true,
+    "prisma@7.9.1": true,
+    "unrs-resolver@1.12.2": true,
+    "esbuild@0.28.2": true
+  }
+}

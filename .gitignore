@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# local environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# generated artifacts
+src/generated/prisma/
+coverage/
+*.tsbuildinfo
+
+# local tooling
+.DS_Store
+*.log
+
+# editors
+.idea/
+.vscode/

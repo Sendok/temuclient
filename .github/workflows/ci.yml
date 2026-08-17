@@ -1,0 +1,57 @@
+name: TemuClient CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: temuclient
+          POSTGRES_PASSWORD: temuclient
+          POSTGRES_DB: temuclient_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U temuclient -d temuclient_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      NODE_ENV: test
+      APP_ENV: test
+      APP_URL: http://localhost:3000
+      AUTH_SECRET: ci-only-secret-with-at-least-32-characters
+      DATABASE_URL: postgresql://temuclient:temuclient@localhost:5432/temuclient_test?schema=public
+      REDIS_URL: redis://localhost:6379
+      RATE_LIMIT_FAIL_OPEN: "false"
+      S3_PROVIDER: mock
+      EMAIL_PROVIDER: log
+      EMAIL_FROM: noreply@temuclient.local
+      BILLING_PROVIDER: sandbox
+      BILLING_WEBHOOK_SECRET: ci-webhook-secret
+      ANALYTICS_PROVIDER: database
+      AI_PROVIDER: deterministic
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run db:migrate:deploy
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: npm run test:integration
+      - run: npm run build
