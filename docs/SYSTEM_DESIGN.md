@@ -623,7 +623,7 @@ Requirements:
 - no autonomous send;
 - minimize storage of sensitive prompt data.
 
-V1 provider selection is environment-based. `deterministic` is the labelled local fallback and `openai` is the initial production adapter; domain services depend only on `AIProvider`, so additional vendors can be registered without changing feature services.
+V1 provider selection is environment-based. `deterministic` is the labelled local fallback and `gemini` is the production adapter through Google's official Gen AI SDK; domain services depend only on `AIProvider`, so additional vendors can be registered without changing feature services. Structured Gemini output is constrained with JSON Schema and validated again with the feature's Zod schema before use.
 
 ---
 
@@ -865,13 +865,15 @@ AI Provider
 
 Infrastructure should use environment-based configuration.
 
-The approved Google Cloud profile preserves this topology with Cloud Run for the
-standalone application, Cloud SQL for PostgreSQL, Artifact Registry/Cloud Build
-for immutable images, Secret Manager for credentials, and a separate Cloud Run
-Job for migrations. Redis may be Memorystore through private Direct VPC egress
-or a TLS-managed Redis provider. Cloud Storage is used only through its private
-XML API/HMAC compatibility surface until a native storage adapter is approved.
-See `GOOGLE_CLOUD_DEPLOYMENT.md` for the controlled procedure.
+The approved Google Cloud profiles preserve this topology with Cloud Run for the
+standalone application, Artifact Registry/Cloud Build for immutable images,
+Secret Manager for credentials, and a separate Cloud Run Job for migrations.
+Managed PostgreSQL may be Cloud SQL or Neon; the cost-optimized staging profile
+uses Neon Singapore with a pooled runtime URL and direct migration URL. Redis
+may be Memorystore through private Direct VPC egress or a TLS-managed provider.
+Cloud Storage is used only through its private XML API/HMAC compatibility
+surface until a native storage adapter is approved. See
+`GOOGLE_CLOUD_DEPLOYMENT.md` and `GOOGLE_CLOUD_NEON_DEPLOYMENT.md`.
 
 ---
 
@@ -896,9 +898,8 @@ EMAIL_PROVIDER=
 EMAIL_FROM=
 
 AI_PROVIDER=
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY=
 GEMINI_API_KEY=
+GEMINI_MODEL=
 ```
 
 Only required provider keys should be mandatory at runtime.

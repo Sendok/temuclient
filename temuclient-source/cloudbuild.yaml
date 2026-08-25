@@ -1,0 +1,65 @@
+steps:
+  - id: install
+    name: node:24-alpine
+    entrypoint: npm
+    args: ["ci"]
+
+  - id: generate-prisma-client
+    name: node:24-alpine
+    entrypoint: npm
+    args: ["run", "db:generate"]
+    waitFor: ["install"]
+
+  - id: lint
+    name: node:24-alpine
+    entrypoint: npm
+    args: ["run", "lint"]
+    waitFor: ["generate-prisma-client"]
+
+  - id: typecheck
+    name: node:24-alpine
+    entrypoint: npm
+    args: ["run", "typecheck"]
+    waitFor: ["generate-prisma-client"]
+
+  - id: unit-test
+    name: node:24-alpine
+    entrypoint: npm
+    args: ["run", "test:unit"]
+    waitFor: ["generate-prisma-client"]
+
+  - id: build-runtime-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --target
+      - runtime
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$BUILD_ID
+      - .
+    waitFor: ["lint", "typecheck", "unit-test"]
+
+  - id: build-migration-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --target
+      - migration
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}-migration:$BUILD_ID
+      - .
+    waitFor: ["lint", "typecheck", "unit-test"]
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}:$BUILD_ID
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_SERVICE}-migration:$BUILD_ID
+
+substitutions:
+  _REGION: asia-southeast2
+  _REPOSITORY: temuclient
+  _SERVICE: temuclient
+
+options:
+  machineType: E2_HIGHCPU_8
+
+timeout: 1800s

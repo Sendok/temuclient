@@ -26,4 +26,10 @@ describe("server environment", () => {
       "Invalid server environment: DATABASE_URL",
     );
   });
+
+  it("requires a Gemini key only when the Gemini provider is selected", () => {
+    expect(() => parseServerEnv({ ...validEnv, AI_PROVIDER: "gemini" })).toThrow(/GEMINI_API_KEY/);
+    expect(parseServerEnv({ ...validEnv, AI_PROVIDER: "gemini", GEMINI_API_KEY: "test-gemini-key" }))
+      .toMatchObject({ AI_PROVIDER: "gemini", GEMINI_MODEL: "gemini-2.5-flash" });
+  });
 });

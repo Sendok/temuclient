@@ -71,6 +71,14 @@ Visual motifs may use:
 
 Avoid handshake clipart, generic people illustrations, and decorative gradients without functional purpose.
 
+### 2.1 Brand Mark
+
+The TemuClient network mark uses berry `#D83267` as its field, blush
+`#FFF1F5` connection paths, light berry nodes, and an ink `#071518`
+verification detail. The wordmark uses ink for `Temu` and berry for `Client`;
+on dark surfaces it uses white and light berry. Favicon, Apple icon, exported
+SVG assets, and social preview images must use the same palette.
+
 ---
 
 ## 3. Color Tokens
@@ -79,24 +87,24 @@ Avoid handshake clipart, generic people illustrations, and decorative gradients 
 
 ```css
 :root {
-  --background: #F7F8FA;
+  --background: #F7F6F6;
   --surface: #FFFFFF;
-  --surface-subtle: #F9FAFB;
+  --surface-subtle: #FBFAF9;
   --surface-elevated: #FFFFFF;
 
-  --text-primary: #111827;
-  --text-secondary: #667085;
-  --text-muted: #98A2B3;
+  --text-primary: #071518;
+  --text-secondary: #5D686B;
+  --text-muted: #828C8E;
   --text-inverse: #FFFFFF;
 
-  --border-default: #E4E7EC;
-  --border-strong: #D0D5DD;
+  --border-default: #E3DFE0;
+  --border-strong: #CFC8CA;
 
-  --brand-50: #EEF2FF;
-  --brand-100: #E0E7FF;
-  --brand-500: #4F46E5;
-  --brand-600: #3730A3;
-  --brand-700: #312E81;
+  --brand-50: #FFF1F5;
+  --brand-100: #FBD9E4;
+  --brand-500: #DC4778;
+  --brand-600: #D83267;
+  --brand-700: #AD204F;
 
   --success-50: #ECFDF3;
   --success-600: #059669;
@@ -128,8 +136,8 @@ Avoid handshake clipart, generic people illustrations, and decorative gradients 
   --border-default: #272B35;
   --border-strong: #343A46;
 
-  --brand-500: #818CF8;
-  --brand-600: #6366F1;
+  --brand-500: #EA83A6;
+  --brand-600: #DC4778;
 }
 ```
 
@@ -151,6 +159,14 @@ Do not use semantic colors decoratively.
 
 Primary font: **Geist Sans**  
 Fallback: `Inter, system-ui, sans-serif`
+
+### Public Marketing Typography
+
+The public marketing surface uses Geist as a Graphik-like neo-grotesk: medium
+weight, very tight display tracking, and restrained italic emphasis. Marketing
+hero text may use `48–90px` through responsive `clamp()`, `0.98–1.02` line
+height, and approximately `-0.04em` tracking. The authenticated application
+continues to use the denser product type scale above.
 
 ### Type Scale
 
@@ -207,6 +223,46 @@ xl: 14px
 Use 8px as the default card radius.
 
 Do not use 20px+ radius for standard cards.
+
+Public marketing may use a 24px radius only for the two primary audience
+panels and major product demonstrations. Supporting cards remain 12–16px so
+the page does not become a collection of oversized pills.
+
+## 6.1 Public Marketing Direction
+
+The marketing site uses a high-contrast editorial marketplace composition:
+
+- white and warm off-white foundations;
+- dark ink `#071518` for authority;
+- berry accent `#D83267` for highlighted language and primary marketing CTAs;
+- blush surface `#FFF1F5` for the Provider path;
+- centered display headline followed by two equal audience paths;
+- compact live-signal pills and credible product UI demonstrations;
+- numbered, border-led explanation sections;
+- generous marketing whitespace without carrying it into the operational app.
+
+This direction may take structural inspiration from premium marketplace sites,
+but TemuClient must retain its own logo, copy, data, product terminology,
+illustrations, and interaction details. Do not copy third-party brand assets or
+claim their customers, metrics, or testimonials.
+
+## 6.2 Authenticated Shell Direction
+
+Buyer, Provider, and Admin surfaces share the ink-and-berry identity while
+remaining operationally dense:
+
+- ink `#071518` sidebar with restrained white navigation;
+- berry active indicator and role/persona label;
+- warm off-white application canvas with white data surfaces;
+- 72px top bar and compact controls;
+- Buyer and Provider share components but receive distinct navigation and
+  server-authorized content;
+- Admin uses a separate operations shell and never enters organization
+  onboarding.
+
+The public display type scale must not be carried into authenticated content.
+Application page headings remain compact and tables/forms retain their existing
+information density.
 
 ---
 

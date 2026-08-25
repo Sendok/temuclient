@@ -908,7 +908,7 @@ All endpoints:
 
 Provider behavior:
 - `AI_PROVIDER=deterministic` enables an explicitly labelled contextual fallback for local/degraded operation;
-- `AI_PROVIDER=openai` uses the configured `OPENAI_MODEL` and never stores the raw prompt in `AIExecution`;
+- `AI_PROVIDER=gemini` uses the configured stable `GEMINI_MODEL` through the Google Gen AI SDK and never stores the raw prompt in `AIExecution`;
 - configured-provider failures return `AI_PROVIDER_UNAVAILABLE`, preserve client input, and write a failed `AIExecution`;
 - rate limits are scoped by user, organization, feature, and plan foundation.
 
@@ -1031,11 +1031,17 @@ new commercial mutation returns `ORGANIZATION_SUSPENDED` server-side.
 
 ### GET `/industries`
 
+Returns the active, ordered Industry reference catalog. Industry, Technology,
+and ServiceCategory reference records are installed through production-safe
+migrations and contain no demo organization or user data.
+
 Public/authenticated read.
 
 ### GET `/services`
 
-Public/authenticated read.
+Returns the active ServiceCategory catalog ordered by `sortOrder`, including
+stable ID, name, slug, description, and optional parent ID. Public/authenticated
+read so both onboarding paths can load it before commercial mutations begin.
 
 Admin:
 - create;

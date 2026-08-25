@@ -79,15 +79,19 @@ Mobile Behavior
 **Route:** `/for-providers`  
 Goal: explain how providers get qualified opportunities.
 
-Primary CTA: `Daftar sebagai Provider`
+Primary CTA: `Mulai mencari client` → `/register`
 
 Content:
-- problem;
-- opportunity model;
-- match score;
-- verification;
-- introduction flow;
-- pricing.
+- plain-language provider definition;
+- opportunity and next-best-action preview;
+- Match Score, Buyer Intent, and Verification signals;
+- four-step capability-to-deal flow;
+- privacy and buyer-controlled Introduction;
+- final free-registration CTA.
+
+Visual: editorial hero with blush signal preview, compact metric strip, numbered
+workflow, trust section, and berry closing CTA. Mobile stacks the hero and all
+signal panels without horizontal scrolling.
 
 ---
 
@@ -96,7 +100,18 @@ Content:
 **Route:** `/for-buyers`  
 Goal: explain how buyers describe need and receive provider shortlist.
 
-Primary CTA: `Cari Vendor`
+Primary CTA: `Mulai mencari vendor` → `/register`
+
+Content:
+- plain-language buyer definition;
+- structured Requirement preview;
+- shortlist and transparent matching signals;
+- four-step problem-to-Introduction flow;
+- privacy and buyer-controlled Introduction;
+- final free-registration CTA.
+
+Visual: editorial hero with dark Requirement preview, high-contrast metric
+strip, numbered workflow, trust section, and berry closing CTA.
 
 ---
 
@@ -142,8 +157,11 @@ Primary CTA: `Masuk`
 Components:
 - Email
 - Password
-- Google OAuth
 - Forgot password
+
+Visual: public marketing navigation, dark editorial context panel on desktop,
+and focused white form surface. The context panel is omitted on mobile so the
+form remains the primary task.
 
 Errors:
 - invalid credentials;
@@ -158,7 +176,11 @@ Errors:
 Primary Goal: create account.
 
 CTA:
-`Daftar`
+`Buat akun gratis`
+
+The page explains that role selection (`Cari client` or `Cari vendor`) happens
+after account creation. Registration uses the same public editorial shell as
+Login and preserves the production Zod/API flow.
 
 After success:
 `/onboarding`
@@ -170,6 +192,9 @@ After success:
 **Goal:** Enter the platform operations console without organization onboarding.  
 **Rules:** User login rejects platform accounts; admin login rejects organization
 members without a platform role. Admin logout returns to `/admin/login`.
+**Visual:** Dedicated ink-and-berry operations identity with a focused login
+form, verification/moderation/audit context panel on desktop, and a single-column
+form on mobile. It does not reuse Buyer or Provider onboarding.
 
 ---
 
@@ -1053,6 +1078,8 @@ Read-only.
 **Data:** Published articles only.  
 **SEO/GEO:** Canonical metadata, semantic headings, ItemList structured data,
 sitemap, RSS, and `llms.txt`.  
+**Visual:** Editorial masthead, visible topic chips, featured article, numbered
+two-column article index, and closing registration CTA.
 **Empty:** Explain that reviewed insight will appear soon.  
 **Mobile:** Single-column article summaries with compact metadata.
 

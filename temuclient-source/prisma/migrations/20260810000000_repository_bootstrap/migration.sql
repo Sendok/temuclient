@@ -1,0 +1,1 @@
+-- Phase 0 establishes migration history before domain models are introduced.

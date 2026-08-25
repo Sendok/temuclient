@@ -18,8 +18,8 @@ describe("Phase 8 AI Sales validation and provider abstraction", () => {
   });
 
   it("returns a loggable unavailable provider when a production secret is missing", async () => {
-    const provider = getAIProvider({ ...process.env, AI_PROVIDER: "openai", OPENAI_API_KEY: "" });
-    expect(provider.name).toBe("openai");
+    const provider = getAIProvider({ ...process.env, AI_PROVIDER: "gemini", GEMINI_API_KEY: "" });
+    expect(provider.name).toBe("gemini");
     await expect(provider.generateText({ system: "test", prompt: "test" })).rejects.toMatchObject({
       code: "AI_PROVIDER_UNAVAILABLE",
     });

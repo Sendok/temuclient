@@ -22,12 +22,17 @@ The repository provides a vendor-neutral standalone `Dockerfile`. Run
 deployment. `docker-compose.release.yml` is an isolated local artifact rehearsal
 only and must not be used as public staging or production infrastructure. The
 controlled staging procedure and approval record are in `STAGING_RELEASE.md`.
-The Google Cloud implementation profile—Cloud Run, Cloud SQL, Artifact
-Registry, Cloud Build, Secret Manager, and managed Redis/storage choices—is in
-`GOOGLE_CLOUD_DEPLOYMENT.md`.
+The Google Cloud implementation profiles use Cloud Run, Artifact Registry,
+Cloud Build, Secret Manager, managed Redis/storage choices, and either Cloud SQL
+or Neon PostgreSQL. See `GOOGLE_CLOUD_DEPLOYMENT.md` for Cloud SQL and
+`GOOGLE_CLOUD_NEON_DEPLOYMENT.md` for the cost-optimized Neon profile.
 
 `prisma/seed.ts` is development/test data only. Never run it in production.
 All example accounts and passwords must be absent from the production database.
+Create the first platform administrator only with the controlled
+`admin:bootstrap` job in `GOOGLE_CLOUD_DEPLOYMENT.md`; it records an audit entry
+and refuses to create a second platform administrator. Import reviewed Markdown
+content with the separate `articles:import` job after that administrator exists.
 
 ## Environment
 
@@ -81,7 +86,7 @@ Quarterly restore drill:
   blocks commercial mutations while retaining review access.
 - Revoke session: delete the target user's `Session` records through an audited
   support procedure; reset-password already revokes all sessions.
-- AI outage: switch to `AI_PROVIDER=deterministic`, redeploy, and keep generated
+- Gemini outage: switch to `AI_PROVIDER=deterministic`, redeploy, and keep generated
   content review-only.
 - Email outage: keep in-app notifications active, queue/retry externally, never
   log tokenized URLs, and restore the provider before expiring token windows.

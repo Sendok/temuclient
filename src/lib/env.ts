@@ -35,9 +35,9 @@ export const serverEnvSchema = z.object({
   ANALYTICS_ENDPOINT: optionalUrl,
   ANALYTICS_WRITE_KEY: optionalString,
   ERROR_TRACKING_DSN: optionalUrl,
-  AI_PROVIDER: defaultEnum(["deterministic", "openai"], "deterministic"),
-  OPENAI_API_KEY: optionalString,
-  OPENAI_MODEL: z.string().trim().default("gpt-5.6-luna"),
+  AI_PROVIDER: defaultEnum(["deterministic", "gemini"], "deterministic"),
+  GEMINI_API_KEY: optionalString,
+  GEMINI_MODEL: z.string().trim().default("gemini-2.5-flash"),
 }).superRefine((env, ctx) => {
   const issue = (path: string, message: string) => ctx.addIssue({ code: "custom", path: [path], message });
   if (env.APP_ENV === "production") {
@@ -56,7 +56,7 @@ export const serverEnvSchema = z.object({
   }
   if (env.APP_ENV === "production" && env.PAID_SUBSCRIPTIONS_ENABLED && !env.MIDTRANS_IS_PRODUCTION) issue("MIDTRANS_IS_PRODUCTION", "Production paid subscriptions must use the Midtrans production endpoint.");
   if (env.ANALYTICS_PROVIDER === "http" && (!env.ANALYTICS_ENDPOINT || !env.ANALYTICS_WRITE_KEY)) issue("ANALYTICS_ENDPOINT", "HTTP analytics endpoint and write key are required.");
-  if (env.AI_PROVIDER === "openai" && !env.OPENAI_API_KEY) issue("OPENAI_API_KEY", "OPENAI_API_KEY is required for OpenAI.");
+  if (env.AI_PROVIDER === "gemini" && !env.GEMINI_API_KEY) issue("GEMINI_API_KEY", "GEMINI_API_KEY is required for Gemini.");
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

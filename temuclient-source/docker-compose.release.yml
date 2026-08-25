@@ -1,0 +1,79 @@
+name: temuclient-release-rehearsal
+
+# Local production-artifact rehearsal only. This is not the public staging stack.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: temuclient_staging
+      POSTGRES_PASSWORD: rehearsal-only-password
+      POSTGRES_DB: temuclient_staging
+    volumes:
+      - rehearsal_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temuclient_staging -d temuclient_staging"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - rehearsal_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  migrate:
+    build:
+      context: .
+      target: migration
+    environment: &staging-environment
+      NODE_ENV: production
+      APP_ENV: staging
+      APP_URL: http://localhost:3100
+      AUTH_SECRET: rehearsal-only-auth-secret-at-least-32-characters
+      DATABASE_URL: postgresql://temuclient_staging:rehearsal-only-password@postgres:5432/temuclient_staging?schema=public
+      REDIS_URL: redis://redis:6379
+      RATE_LIMIT_FAIL_OPEN: "false"
+      S3_PROVIDER: mock
+      STORAGE_SIGNING_SECRET: rehearsal-only-storage-secret
+      EMAIL_PROVIDER: log
+      EMAIL_FROM: noreply@temuclient.local
+      BILLING_PROVIDER: sandbox
+      BILLING_WEBHOOK_SECRET: rehearsal-only-webhook-secret
+      ANALYTICS_PROVIDER: database
+      AI_PROVIDER: deterministic
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    environment: *staging-environment
+    ports:
+      - "3100:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/v1/health/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+
+volumes:
+  rehearsal_postgres:
+  rehearsal_redis:

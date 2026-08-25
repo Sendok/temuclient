@@ -26,6 +26,16 @@ steps:
     name: node:24-alpine
     entrypoint: npm
     args: ["run", "test:unit"]
+    # Unit tests import domain services that initialize infrastructure clients.
+    # These values are non-secret and are never used to contact real services.
+    env:
+      - NODE_ENV=test
+      - APP_ENV=test
+      - APP_URL=http://localhost:3000
+      - AUTH_SECRET=cloud-build-unit-test-secret-000000000000
+      - DATABASE_URL=postgresql://test:test@localhost:5432/temuclient_test
+      - REDIS_URL=redis://localhost:6379
+      - RATE_LIMIT_FAIL_OPEN=true
     waitFor: ["generate-prisma-client"]
 
   - id: build-runtime-image

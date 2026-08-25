@@ -1,5 +1,10 @@
 # TemuClient V1 — Google Cloud Deployment
 
+> This document is the Cloud SQL profile. For the lower-cost Cloud Run + Neon
+> profile selected for current staging, use
+> `GOOGLE_CLOUD_NEON_DEPLOYMENT.md`. Do not combine Cloud SQL socket arguments
+> with Neon connection URLs.
+
 ## Decision
 
 Deploy the existing standalone container to Cloud Run. Use Artifact Registry for
@@ -106,12 +111,13 @@ temuclient-s3-secret-access-key
 temuclient-storage-signing-secret
 temuclient-resend-api-key
 temuclient-billing-webhook-secret
+temuclient-bootstrap-admin-password
 ```
 
 Add optional secrets only when their adapter is enabled:
 
 ```text
-temuclient-openai-api-key
+temuclient-gemini-api-key
 temuclient-midtrans-server-key
 ```
 
@@ -166,6 +172,44 @@ gcloud run jobs execute temuclient-staging-migrate \
 Inspect migration SQL and take a database backup before executing the job. A
 failed migration blocks application deployment.
 
+## 5a. Bootstrap the first platform administrator
+
+Do not run `prisma db seed` outside development or test. After the first
+migration, create the initial `SUPER_ADMIN` through a one-use, auditable Cloud
+Run Job. Store a unique password of at least 12 characters in
+`temuclient-bootstrap-admin-password`; never put it directly in a shell command
+or commit it to a file.
+
+```bash
+export TEMUCLIENT_ADMIN_EMAIL="admin@your-company.example"
+export TEMUCLIENT_ADMIN_NAME="TemuClient Administrator"
+
+gcloud run jobs deploy temuclient-staging-bootstrap-admin \
+  --project="$GCP_PROJECT_ID" \
+  --region="$GCP_REGION" \
+  --image="$GCP_MIGRATION_IMAGE" \
+  --service-account="$GCP_RUNTIME_SERVICE_ACCOUNT" \
+  --set-cloudsql-instances="$GCP_CLOUD_SQL_CONNECTION" \
+  --command=npm \
+  --args=run,admin:bootstrap \
+  --set-env-vars="BOOTSTRAP_ADMIN_EMAIL=${TEMUCLIENT_ADMIN_EMAIL},BOOTSTRAP_ADMIN_NAME=${TEMUCLIENT_ADMIN_NAME}" \
+  --set-secrets="DATABASE_URL=temuclient-database-url:latest,BOOTSTRAP_ADMIN_PASSWORD=temuclient-bootstrap-admin-password:latest" \
+  --tasks=1 \
+  --max-retries=0 \
+  --task-timeout=10m
+
+gcloud run jobs execute temuclient-staging-bootstrap-admin \
+  --project="$GCP_PROJECT_ID" \
+  --region="$GCP_REGION" \
+  --wait
+```
+
+The command refuses to create a second platform administrator, refuses to
+promote an existing ordinary user, hashes the password, and records an audit
+entry. Delete or disable access to the bootstrap password secret after the job
+succeeds. Additional platform admins must be created through an approved,
+audited admin procedure.
+
 ## 6. Deploy the Cloud Run service
 
 Copy `deploy/gcp/cloud-run.staging.env.yaml.example` to an untracked file,
@@ -190,7 +234,7 @@ gcloud run deploy "$GCP_SERVICE" \
   --timeout=60s \
   --set-cloudsql-instances="$GCP_CLOUD_SQL_CONNECTION" \
   --env-vars-file=deploy/gcp/cloud-run.staging.env.yaml \
-  --set-secrets="AUTH_SECRET=temuclient-auth-secret:latest,DATABASE_URL=temuclient-database-url:latest,REDIS_URL=temuclient-redis-url:latest,S3_ACCESS_KEY_ID=temuclient-s3-access-key-id:latest,S3_SECRET_ACCESS_KEY=temuclient-s3-secret-access-key:latest,STORAGE_SIGNING_SECRET=temuclient-storage-signing-secret:latest,RESEND_API_KEY=temuclient-resend-api-key:latest,BILLING_WEBHOOK_SECRET=temuclient-billing-webhook-secret:latest" \
+  --set-secrets="AUTH_SECRET=temuclient-auth-secret:latest,DATABASE_URL=temuclient-database-url:latest,REDIS_URL=temuclient-redis-url:latest,S3_ACCESS_KEY_ID=temuclient-s3-access-key-id:latest,S3_SECRET_ACCESS_KEY=temuclient-s3-secret-access-key:latest,STORAGE_SIGNING_SECRET=temuclient-storage-signing-secret:latest,RESEND_API_KEY=temuclient-resend-api-key:latest,BILLING_WEBHOOK_SECRET=temuclient-billing-webhook-secret:latest,GEMINI_API_KEY=temuclient-gemini-api-key:latest" \
   --startup-probe="httpGet.path=/api/v1/health/live,initialDelaySeconds=0,timeoutSeconds=5,periodSeconds=5,failureThreshold=12" \
   --liveness-probe="httpGet.path=/api/v1/health/live,initialDelaySeconds=10,timeoutSeconds=5,periodSeconds=15,failureThreshold=4"
 ```
@@ -198,6 +242,39 @@ gcloud run deploy "$GCP_SERVICE" \
 When using Memorystore, add Direct VPC egress with the approved network and
 subnet. Do not route all internet traffic through the VPC unless Cloud NAT and
 the resulting egress behavior have been designed explicitly.
+
+## 6a. Import reviewed Markdown articles
+
+The public Insight pages read published articles from PostgreSQL. Files under
+`content/articles` are source content, not an automatic database seed. Import
+them only after the platform administrator exists, using the migration image
+that contains the reviewed source files:
+
+```bash
+gcloud run jobs deploy temuclient-staging-import-articles \
+  --project="$GCP_PROJECT_ID" \
+  --region="$GCP_REGION" \
+  --image="$GCP_MIGRATION_IMAGE" \
+  --service-account="$GCP_RUNTIME_SERVICE_ACCOUNT" \
+  --set-cloudsql-instances="$GCP_CLOUD_SQL_CONNECTION" \
+  --command=npm \
+  --args=run,articles:import \
+  --set-env-vars="NODE_ENV=production,APP_ENV=staging,APP_URL=${GCP_SERVICE_URL},RATE_LIMIT_FAIL_OPEN=false,ARTICLE_IMPORT_ACTOR_EMAIL=${TEMUCLIENT_ADMIN_EMAIL}" \
+  --set-secrets="AUTH_SECRET=temuclient-auth-secret:latest,DATABASE_URL=temuclient-database-url:latest,REDIS_URL=temuclient-redis-url:latest" \
+  --tasks=1 \
+  --max-retries=0 \
+  --task-timeout=15m
+
+gcloud run jobs execute temuclient-staging-import-articles \
+  --project="$GCP_PROJECT_ID" \
+  --region="$GCP_REGION" \
+  --wait
+```
+
+Set `GCP_SERVICE_URL` to the deployed HTTPS origin first. The import validates
+the actor's platform role, upserts by article slug, and writes an audit record
+for every created or updated article, so rerunning the same reviewed content is
+safe.
 
 ## 7. Domain, verification, and promotion
 

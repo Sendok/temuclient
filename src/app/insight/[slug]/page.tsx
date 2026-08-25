@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ArticleMarkdown } from "@/components/articles/article-markdown";
 import { JsonLd } from "@/components/articles/json-ld";
-import { MarketingFooter, MarketingNav } from "@/components/prototype/marketing-prototype";
+import { MarketingFooter, MarketingNav } from "@/components/marketing/site-shell";
 import { Badge } from "@/components/ui/primitives";
 import { getServerEnv } from "@/lib/env";
 import { extractFaq } from "@/modules/articles/markdown";

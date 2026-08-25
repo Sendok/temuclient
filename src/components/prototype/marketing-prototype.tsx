@@ -2,16 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Check, CheckCircle2, ChevronDown, Menu, Network, Search, ShieldCheck, Users, X } from "lucide-react";
+import { ArrowRight, Check, CheckCircle2, ChevronDown, Network, Search, ShieldCheck, Users } from "lucide-react";
 
-import { TemuClientLogo } from "@/components/brand/temuclient-logo";
+import { MarketingFooter, MarketingNav } from "@/components/marketing/site-shell";
 import { BuyerIntent, MatchScore, VerificationSummary } from "@/components/shared/signals";
 import { Badge, Card, Input } from "@/components/ui/primitives";
 import { cn } from "@/lib/utils";
-
-export function MarketingNav() { const [open,setOpen]=useState(false); return <header className="sticky top-0 z-40 border-b bg-surface/95 backdrop-blur"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"><Link aria-label="TemuClient — Beranda" href="/"><TemuClientLogo /></Link><nav className="hidden items-center gap-7 text-sm text-text-secondary md:flex"><Link href="/for-providers">Saya mencari client</Link><Link href="/for-buyers">Saya mencari vendor</Link><Link href="/insight">Panduan</Link><Link href="/pricing">Harga</Link></nav><div className="hidden items-center gap-2 md:flex"><Link className="min-h-10 rounded-md px-4 py-2 text-sm font-semibold" href="/login">Masuk</Link><Link className="min-h-10 rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white" href="/register">Mulai Sekarang</Link></div><button aria-label="Menu" className="flex size-10 items-center justify-center md:hidden" onClick={()=>setOpen(true)}><Menu className="size-5"/></button></div>{open&&<div className="fixed inset-0 z-50 min-h-screen bg-surface p-5 md:hidden"><div className="flex justify-between"><TemuClientLogo/><button aria-label="Tutup menu" onClick={()=>setOpen(false)}><X/></button></div><nav className="mt-8 space-y-2">{[["Saya mencari client","/for-providers"],["Saya mencari vendor","/for-buyers"],["Panduan","/insight"],["Harga","/pricing"],["Masuk","/login"],["Mulai Sekarang","/register"]].map(([label,href])=><Link className="block border-b py-4 text-lg font-medium" href={href} key={href}>{label}</Link>)}</nav></div>}</header>; }
-
-export function MarketingFooter() { return <footer className="border-t bg-surface"><div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8"><div><p className="font-semibold">TemuClient</p><p className="mt-3 max-w-sm text-sm leading-6 text-text-secondary">Verified B2B Opportunity Network untuk bisnis Indonesia yang membutuhkan koneksi lebih berkualitas.</p></div><div><p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Product</p><div className="mt-3 space-y-2 text-sm"><Link className="block" href="/for-providers">Provider</Link><Link className="block" href="/for-buyers">Buyer</Link><Link className="block" href="/insight">Insight</Link><Link className="block" href="/pricing">Pricing</Link></div></div><div><p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Platform</p><div className="mt-3 space-y-2 text-sm"><Link className="block" href="/login">Masuk</Link><Link className="block" href="/register">Buat Akun</Link><Link className="block" href="/sitemap.xml">Sitemap</Link></div></div></div><div className="border-t px-4 py-5 text-center text-xs text-text-muted">© 2026 TemuClient. Verified B2B Opportunity Network.</div></footer>; }
 
 const Footer = MarketingFooter;
 

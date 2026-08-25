@@ -1,17 +1,17 @@
 import { DomainError } from "@/lib/errors/domain-error";
 import type { AIProvider } from "@/modules/ai/provider";
 import { DeterministicAIProvider } from "@/modules/ai/providers/deterministic";
-import { OpenAIProvider } from "@/modules/ai/providers/openai";
+import { GeminiProvider } from "@/modules/ai/providers/gemini";
 
 export function getAIProvider(source: NodeJS.ProcessEnv = process.env): AIProvider {
   const provider = source.AI_PROVIDER?.trim().toLowerCase() || "deterministic";
   if (provider === "deterministic") return new DeterministicAIProvider();
-  if (provider === "openai") {
-    if (!source.OPENAI_API_KEY)
-      return new UnavailableAIProvider("openai", source.OPENAI_MODEL || "not-configured");
-    return new OpenAIProvider(
-      source.OPENAI_API_KEY,
-      source.OPENAI_MODEL || "gpt-5.6-luna",
+  if (provider === "gemini") {
+    if (!source.GEMINI_API_KEY)
+      return new UnavailableAIProvider("gemini", source.GEMINI_MODEL || "not-configured");
+    return new GeminiProvider(
+      source.GEMINI_API_KEY,
+      source.GEMINI_MODEL || "gemini-2.5-flash",
     );
   }
   return new UnavailableAIProvider(provider, "unsupported");

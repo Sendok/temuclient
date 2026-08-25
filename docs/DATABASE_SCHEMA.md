@@ -330,6 +330,32 @@ Constraints:
 
 - unique slug.
 
+Initial active service catalog:
+
+```text
+Custom Software Development
+Web Development
+Mobile Development
+ERP
+CRM
+AI Development
+Data & Analytics
+Cloud
+DevOps
+Cybersecurity
+IT Outsourcing
+UI/UX
+System Integration
+Digital Transformation
+SaaS Implementation
+```
+
+This reference catalog is inserted by a production-safe Prisma migration. It
+must not depend on the development seed, because staging and production never
+run demo seed data. Service names, slugs, descriptions, active state, and sort
+order are updated through reviewed migrations so Buyer and Provider onboarding
+receive the same catalog in every environment.
+
 Indexes:
 
 - type;

@@ -21,11 +21,14 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:status": "prisma migrate status",
     "db:seed": "prisma db seed",
+    "admin:bootstrap": "tsx scripts/bootstrap-admin.ts",
+    "articles:import": "tsx scripts/import-articles.ts",
     "staging:preflight": "tsx scripts/staging-preflight.ts",
     "staging:rehearsal:up": "docker compose -f docker-compose.release.yml up --build --wait",
     "staging:rehearsal:down": "docker compose -f docker-compose.release.yml down"
   },
   "dependencies": {
+    "@google/genai": "^2.18.0",
     "@hookform/resolvers": "^5.7.1",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
@@ -35,14 +38,13 @@
     "ioredis": "^6.0.0",
     "lucide-react": "^1.31.0",
     "next": "^16.3.0",
-    "openai": "^7.4.0",
     "pg": "^8.23.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.85.0",
     "react-markdown": "^10.1.0",
-    "tailwind-merge": "^3.6.0",
     "remark-gfm": "^4.0.1",
+    "tailwind-merge": "^3.6.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

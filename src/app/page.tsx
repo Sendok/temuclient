@@ -1,4 +1,4 @@
-import { LandingPage } from "@/components/prototype/marketing-prototype";
+import { LandingPage } from "@/components/marketing/landing-page";
 import { JsonLd } from "@/components/articles/json-ld";
 import { getServerEnv } from "@/lib/env";
 

@@ -9,6 +9,7 @@ export default defineConfig([
     ".next/**",
     "coverage/**",
     "src/generated/prisma/**",
+    "temuclient-source/**",
     "next-env.d.ts",
   ]),
 ]);

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { AuthPage } from "@/components/foundation/auth-page";
 import { RoleOnboarding } from "@/components/foundation/onboarding";
+import { AudiencePage } from "@/components/marketing/audience-page";
 import { PublicPrototype } from "@/components/prototype/marketing-prototype";
 import { getCurrentSession } from "@/server/auth/session";
 
@@ -28,6 +29,8 @@ export default async function PublicPage({ params, searchParams }: { params: Pro
   if (slug === "register") return <AuthPage mode="register" />;
   if (slug === "forgot-password") return <AuthPage mode="forgot" />;
   if (slug === "reset-password") return <AuthPage mode="reset" token={query.token} />;
+  if (slug === "for-providers") return <AudiencePage kind="provider" />;
+  if (slug === "for-buyers") return <AudiencePage kind="buyer" />;
   if (slug === "onboarding") {
     if (!session) redirect("/login");
     if (session.activeOrganizationId) redirect("/app");
